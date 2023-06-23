@@ -1,9 +1,7 @@
 package cryptography
 
-import java.io.IOException
-
 val FH = FileHandler()
-val CG = Cryptograph()
+val CG = Steganograph()
 
 fun main() {
     var exit = false
@@ -28,20 +26,30 @@ private fun hide() {
     val inputImageName = readln()
     println("Output image file:")
     val  outputImageName = readln()
+    println("Message to hide:")
+    val message = readln()
 
     try {
         val inputImage = FH.readImage(inputImageName)
-        val outputImage = CG.setLeastSignificantBitToOne(inputImage)
+        val outputImage = CG.encode(inputImage, message)
         FH.saveImage(outputImage, outputImageName)
-        println("Input Image: $inputImageName")
-        println("Output Image: $outputImageName")
-        println("Image $outputImageName is saved.")
-    } catch (e: IOException) {
+        println("Message saved in $outputImage image.")
+    } catch (e: RuntimeException) {
         println(e.message)
     }
 
 }
 
 private fun show() {
-    println("Obtaining message from image.")
+    println("Input image file:")
+    val inputImageName = readln()
+
+    try {
+        val inputImage = FH.readImage(inputImageName)
+        val message = CG.decode(inputImage)
+        println("Message:")
+        println(message)
+    } catch (e: RuntimeException) {
+        println(e.message)
+    }
 }
