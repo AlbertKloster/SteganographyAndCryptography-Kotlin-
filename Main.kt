@@ -2,6 +2,7 @@ package cryptography
 
 val FH = FileHandler()
 val CG = Steganograph()
+val XC = XorCoder()
 
 fun main() {
     var exit = false
@@ -28,10 +29,13 @@ private fun hide() {
     val  outputImageName = readln()
     println("Message to hide:")
     val message = readln()
+    println("Password:")
+    val password = readln()
+    val encodedMessage = XC.getXorString(message, password)
 
     try {
         val inputImage = FH.readImage(inputImageName)
-        val outputImage = CG.encode(inputImage, message)
+        val outputImage = CG.encode(inputImage, encodedMessage)
         FH.saveImage(outputImage, outputImageName)
         println("Message saved in $outputImage image.")
     } catch (e: RuntimeException) {
@@ -43,12 +47,14 @@ private fun hide() {
 private fun show() {
     println("Input image file:")
     val inputImageName = readln()
+    println("Password:")
+    val password = readln()
 
     try {
         val inputImage = FH.readImage(inputImageName)
-        val message = CG.decode(inputImage)
+        val encodedMessage = CG.decode(inputImage)
         println("Message:")
-        println(message)
+        println(XC.getXorString(encodedMessage, password))
     } catch (e: RuntimeException) {
         println(e.message)
     }
